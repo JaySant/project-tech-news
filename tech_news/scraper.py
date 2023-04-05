@@ -28,12 +28,38 @@ def scrape_updates(html_content):
 
 # Requisito 3
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    sel_element = Selector(text=html_content)
+    urls = sel_element.css('a.next.page_numbers::attr(href)').get()
+    if urls:
+        return urls
+    else:
+        None
 
 
 # Requisito 4
 def scrape_news(html_content):
-    """Seu código deve vir aqui"""
+    sel_element = Selector(text=html_content)
+
+    url = sel_element.css("link[rel='canonical']::attr(href)").get()
+    title = sel_element.css('.entry-title::text').get().strip()
+    timestamp = sel_element.css('li.meta-date::text').get()
+    writer = sel_element.css('span.author > a::text').get()
+    reading_time = int(sel_element.css('li.meta-reading-time::text').get(
+        )[0:2])
+    summary = "".join(
+        sel_element.css('.entry-content > p:first-of-type *::text').getall(
+        )).strip()
+    category = sel_element.css('a.category-style > span.label::text').get()
+
+    return {
+        "url": url,
+        "title": title,
+        "timestamp": timestamp,
+        "writer": writer,
+        "reading_time": reading_time,
+        "summary": summary,
+        "category": category,
+    }
 
 
 # Requisito 5
